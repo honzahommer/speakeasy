@@ -41,7 +41,7 @@
     "node": ">= 0.10.0"
   },
   "dependencies": {
-    "base32.js": "github:honzahommer/base32.js"
+    "base32.js": "github:honzahommer/base32.js#v0.1.1-pre"
   },
   "devDependencies": {
     "chai": "^3.4.1",
