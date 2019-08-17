@@ -416,7 +416,7 @@ verifies.
 <dd><p>Generates a random secret with the set A-Z a-z 0-9 and symbols, of any length
 (default 32).</p>
 </dd>
-<dt><a href="#generateSecretASCII">generateSecretASCII([length], [symbols])</a> ⇒ <code>String</code></dt>
+<dt><a href="#generateSecretASCII">generateSecretASCII([length], [options])</a> ⇒ <code>String</code></dt>
 <dd><p>Generates a key of a certain length (default 32) from A-Z, a-z, 0-9, and
 symbols (if requested).</p>
 </dd>
@@ -642,6 +642,7 @@ Authenticator URL to obtain a QR code you can scan into the app.
 | --- | --- | --- | --- |
 | options | <code>Object</code> |  |  |
 | [options.length] | <code>Integer</code> | <code>32</code> | Length of the secret |
+| [options.secret] | [`SecretOptions`](#SecretOptions) | <code>{}</code> | |
 | [options.symbols] | <code>Boolean</code> | <code>false</code> | Whether to include symbols |
 | [options.otpauth_url] | <code>Boolean</code> | <code>true</code> | Whether to output a Google   Authenticator-compatible otpauth:// URL (only returns otpauth:// URL, no QR code) |
 | [options.name] | <code>String</code> |  | The name to use with Google Authenticator. |
@@ -650,7 +651,7 @@ Authenticator URL to obtain a QR code you can scan into the app.
 | [options.issuer] | <code>String</code> |  | The provider or service with which the secret key is associated. |
 
 <a name="generateSecretASCII"></a>
-### generateSecretASCII([length], [symbols]) ⇒ <code>String</code>
+### generateSecretASCII([length], [options]) ⇒ <code>String</code>
 Generates a key of a certain length (default 32) from A-Z, a-z, 0-9, and
 symbols (if requested).
 
@@ -661,7 +662,7 @@ symbols (if requested).
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [length] | <code>Integer</code> | <code>32</code> | The length of the key. |
-| [symbols] | <code>Boolean</code> | <code>false</code> | Whether to include symbols in the key. |
+| [options] | [`SecretOptions`](#SecretOptions) | <code>{}</code> | |
 
 <a name="otpauthURL"></a>
 ### otpauthURL(options) ⇒ <code>String</code>
@@ -719,6 +720,23 @@ generator, such as the `qr-image` module.
 | qr_code_base32 | <code>String</code> | URL for the QR code for the base32 secret. |
 | google_auth_qr | <code>String</code> | URL for the Google Authenticator otpauth   URL's QR code. |
 | otpauth_url | <code>String</code> | Google Authenticator-compatible otpauth URL. |
+
+
+<a name="SecretOptions"></a>
+### SecretOptions : <code>Object</code>
+
+**Kind**: global typedef
+
+**Properties**
+
+| Name | Type | Attributes | Default | Description |
+| --- | --- | --- | --- | --- |
+| symbols | <code>Boolean</code> | <optional> | <code>true</code> | Include symbols ( e.g. @#$% ). |
+| numbers | <code>Boolean</code> | <optional> | <code>true</code> | Include numbers ( e.g. 123456 ). |
+| lowercase | <code>Boolean</code> | <optional> | <code>true</code> | Include lowercase characters ( e.g. abcdefgh ). |
+| uppercase | <code>Boolean</code> | <optional> | <code>true</code> | Include uppercase characters ( e.g. ABCDEFGH ). |
+| similar | <code>Boolean</code> | <optional> | <code>true</code> | Include similar characters ( e.g. i, l, 1, L, o, 0, O ). |
+| ambiguous | <code>Boolean</code> | <optional> | <code>true</code> | Include ambiguous characters ( ( ) < > / [ ] { } , . : ; ). |
 
 <a name="contributing"></a>
 ## Contributing

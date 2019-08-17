@@ -456,6 +456,17 @@ exports.totp.verify = function totpVerify (options) {
 };
 
 /**
+ * @typedef SecretOptions
+ * @type Object
+ * @property {Boolean} [symbols=true] Include symbols ( e.g. @#$% ).
+ * @property {Boolean} [numbers=true] Include numbers ( e.g. 123456 ).
+ * @property {Boolean} [lowercase=true] Include lowercase characters ( e.g. abcdefgh ).
+ * @property {Boolean} [uppercase=true] Include uppercase characters ( e.g. ABCDEFGH ).
+ * @property {Boolean} [similar=true] Include similar characters ( e.g. i, l, 1, L, o, 0, O ).
+ * @property {Boolean} [ambiguous=true] Include ambiguous characters ( ( ) < > / [ ] { } , . : ; ).
+ */
+
+/**
  * @typedef GeneratedSecret
  * @type Object
  * @property {String} ascii ASCII representation of the secret
@@ -478,6 +489,7 @@ exports.totp.verify = function totpVerify (options) {
  *
  * @param {Object} options
  * @param {Integer} [options.length=32] Length of the secret
+ * @param {SecretOptions} [options.secret={}]
  * @param {Boolean} [options.symbols=false] Whether to include symbols
  * @param {Boolean} [options.otpauth_url=true] Whether to output a Google
  *   Authenticator-compatible otpauth:// URL (only returns otpauth:// URL, no
@@ -502,16 +514,16 @@ exports.generateSecret = function generateSecret (options) {
   var qr_codes = options.qr_codes || false;
   var google_auth_qr = options.google_auth_qr || false;
   var otpauth_url = options.otpauth_url != null ? options.otpauth_url : true;
-  var symbols = true;
+  var secret = options.secret || {};
   var issuer = options.issuer;
 
   // turn off symbols only when explicity told to
   if (options.symbols !== undefined && options.symbols === false) {
-    symbols = false;
+    secret.symbols = false;
   }
 
   // generate an ascii key
-  var key = this.generateSecretASCII(length, symbols);
+  var key = this.generateSecretASCII(length, secret);
 
   // return a SecretKey with ascii, hex, and base32
   var SecretKey = {};
@@ -554,15 +566,27 @@ exports.generate_key = util.deprecate(function (options) {
  * Generates a key of a certain length (default 32) from A-Z, a-z, 0-9, and
  * symbols (if requested).
  *
- * @param  {Integer} [length=32]  The length of the key.
- * @param  {Boolean} [symbols=false] Whether to include symbols in the key.
- * @return {String} The generated key.
+ * @param {Integer} [length=32]  The length of the key.
+ * @param {SecretOptions} [options={}]
  */
-exports.generateSecretASCII = function generateSecretASCII (length, symbols) {
+exports.generateSecretASCII = function generateSecretASCII (length, options) {
+  var defaults = {symbols: true, numbers: true, lowercase: true, uppercase: true, similar: true, ambiguous: true};
+  options = Object.assign({}, defaults, options || {});
+
   var bytes = crypto.randomBytes(length || 32);
-  var set = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-  if (symbols) {
-    set += '!@#$%^&*()<>?/[]{},.:;';
+  var letters = 'abcdefghjkmnpqrstuvwxyz';
+  var numbers = '23456789';
+  var symbols = '!@#$%^&*?';
+
+  var set = '';
+  if (options.similar) { letters += 'ilo'; numbers += '01'; }
+  if (options.ambiguous) symbols += '()<>/[]{},.:;';
+  if (options.lowercase) set += letters;
+  if (options.uppercase) set += letters.toUpperCase();
+  if (options.numbers)   set += numbers;
+  if (options.symbols)   set += symbols;
+  if (set === '') {
+    throw new Error('Speakeasy - generateSecretASCII - Invalid options `' + options + '`; must have at least one of these propertiest enabled: lowercase, uppercase, numbers, symbols');
   }
 
   var output = '';
