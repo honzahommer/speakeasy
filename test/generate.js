@@ -23,7 +23,7 @@ describe('Generator tests', function () {
     assert.isUndefined(secret.google_auth_qr, 'Google Auth QR should not be returned');
 
     // check encodings
-    assert.equal(Buffer(secret.hex, 'hex').toString('ascii'), secret.ascii, 'Should have encoded correct hex string');
+    assert.equal(Buffer.from(secret.hex, 'hex').toString('ascii'), secret.ascii, 'Should have encoded correct hex string');
     assert.equal(base32.decode(secret.base32).toString('ascii'), secret.ascii, 'Should have encoded correct base32 string');
   });
 
@@ -83,7 +83,7 @@ describe('Generator tests', function () {
       name: 'Example:alice@google.com'
     });
 
-    var secret = new Buffer(answer.ascii, 'ascii');
+    var secret = Buffer.from(answer.ascii, 'ascii');
     if (Buffer.isBuffer(secret)) secret = base32.encode(secret);
 
     var expect = 'otpauth://totp/Example%3Aalice%40google.com?secret=' + secret + '&algorithm=SHA1&digits=6&period=30';
@@ -98,7 +98,7 @@ describe('Generator tests', function () {
       name: 'Example:alice@google.com'
     });
 
-    var secret = new Buffer(answer.ascii, 'ascii');
+    var secret = Buffer.from(answer.ascii, 'ascii');
     if (Buffer.isBuffer(secret)) secret = base32.encode(secret);
 
     var expect = 'otpauth://totp/Example%3Aalice%40google.com?secret=' + secret + '&algorithm=SHA1&digits=6&period=30';
@@ -114,7 +114,7 @@ describe('Generator tests', function () {
       google_auth_qr: true
     });
 
-    var secret = new Buffer(answer.base32, 'ascii');
+    var secret = Buffer.from(answer.base32, 'ascii');
     if (Buffer.isBuffer(secret)) secret = base32.encode(secret);
 
     var google_chart_url = 'https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=';    
@@ -132,7 +132,7 @@ describe('Generator tests', function () {
       issuer: 'issuer name'
     });
 
-    var secret = new Buffer(answer.ascii, 'ascii');
+    var secret = Buffer.from(answer.ascii, 'ascii');
     if (Buffer.isBuffer(secret)) secret = base32.encode(secret);
 
     var expect = 'otpauth://totp/Example%3Aalice%40google.com?secret=' + secret + '&issuer=issuer%20name&algorithm=SHA1&digits=6&period=30';
