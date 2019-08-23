@@ -490,7 +490,7 @@ exports.totp.verify = function totpVerify (options) {
  * @param {Integer} [options.length=32] Length of the secret
  * @param {SecretOptions} [options.secret={}]
  * @param {Boolean} [options.symbols=false] Whether to include symbols
- * @param {Boolean} [options.otpauth_url=true] Whether to output a Google
+ * @param {Boolean|String} [options.otpauth_url='ascii'] Whether to output a Google
  *   Authenticator-compatible otpauth:// URL (only returns otpauth:// URL, no
  *   QR code)
  * @param {String} [options.name] The name to use with Google Authenticator.
@@ -541,7 +541,7 @@ exports.generateSecret = function generateSecret (options) {
   // add in the Google Authenticator-compatible otpauth URL
   if (otpauthUrl) {
     SecretKey.otpauth_url = exports.otpauthURL({
-      secret: SecretKey.ascii,
+      secret: SecretKey[typeof otpauthUrl !== 'string' ? 'ascii' : otpauthUrl],
       label: name,
       issuer: issuer
     });
