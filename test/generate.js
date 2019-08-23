@@ -60,6 +60,19 @@ describe('Generator tests', function () {
     assert.ok(/^[a-z0-9]+$/i.test(secret.ascii), 'Should return an alphanumeric key');
   });
 
+  it('generateSecretASCII should have at least one option enabled', function () {
+    assert.throws(function () {
+      speakeasy.generateSecretASCII(32, {
+        similar: false,
+        ambiguous: false,
+        lowercase: false,
+        uppercase: false,
+        numbers: false,
+        symbols: false
+      }, /invalid options/);
+    });
+  });
+
   it('Testing generateSecretASCII with custom length', function () {
     var secret = speakeasy.generateSecretASCII(20);
     assert.equal(secret.length, 20, 'Should return the correct length');
