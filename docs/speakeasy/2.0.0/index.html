@@ -43,7 +43,7 @@
 
 
     <section>
-        <article><p><img src="http://i.imgur.com/qRyNMx4.png" width="550"></p>
+        <article><img src="http://i.imgur.com/qRyNMx4.png" width="550">
 <p><a href="https://travis-ci.org/speakeasyjs/speakeasy"><img src="https://travis-ci.org/speakeasyjs/speakeasy.svg?branch=v2" alt="Build Status"></a>
 <a href="https://www.npmjs.com/package/speakeasy"><img src="https://img.shields.io/npm/dt/speakeasy.svg" alt="NPM downloads"></a>
 <a href="https://coveralls.io/github/speakeasyjs/speakeasy?branch=v2"><img src="https://coveralls.io/repos/github/speakeasyjs/speakeasy/badge.svg?branch=v2" alt="Coverage Status"></a>
@@ -63,30 +63,41 @@ One-time Password (TOTP) algorithm defined in <a href="https://tools.ietf.org/ht
 supported. This project incorporates code from <a href="http://github.com/mikepb/passcode">passcode</a>, originally a
 fork of Speakeasy, and <a href="https://github.com/guyht/notp">notp</a>.</p>
 <p><a name="install"></a></p>
-<h2>Install</h2><pre class="prettyprint source lang-sh"><code>npm install --save speakeasy</code></pre><p><a name="demo"></a></p>
-<h2>Demo</h2><p>This demo uses the <code>generateSecret</code> method of Speakeasy to generate a secret key,
+<h2>Install</h2>
+<pre class="prettyprint source lang-sh"><code>npm install --save speakeasy
+</code></pre>
+<p><a name="demo"></a></p>
+<h2>Demo</h2>
+<p>This demo uses the <code>generateSecret</code> method of Speakeasy to generate a secret key,
 displays a Google Authenticator–compatible QR code which you can scan into your
 phone's two-factor app, and shows the token, which you can verify with your
 phone. Includes sample code. https://sedemo-mktb.rhcloud.com/</p>
 <p><a href="https://sedemo-mktb.rhcloud.com/"><img src="http://i.imgur.com/gPwPP4u.png" height="43"></a></p>
 <p><a name="two-factor"></a></p>
-<h2>Two-Factor Usage</h2><p>Let's say you have a user that wants to enable two-factor authentication, and you intend to do two-factor authentication using an app like Google Authenticator, Duo Security, Authy, etc. This is a three-step process:</p>
+<h2>Two-Factor Usage</h2>
+<p>Let's say you have a user that wants to enable two-factor authentication, and you intend to do two-factor authentication using an app like Google Authenticator, Duo Security, Authy, etc. This is a three-step process:</p>
 <ol>
 <li>Generate a secret</li>
 <li>Show a QR code for the user to scan in</li>
 <li>Authenticate the token for the first time</li>
 </ol>
-<h3>Generating a key</h3><p>Use Speakeasy's key generator to get a key.</p>
+<h3>Generating a key</h3>
+<p>Use Speakeasy's key generator to get a key.</p>
 <pre class="prettyprint source lang-js"><code>var secret = speakeasy.generateSecret();
 // Returns an object with secret.ascii, secret.hex, and secret.base32.
-// Also returns secret.otpauth_url, which we'll use later.</code></pre><p>This will generate a secret key of length 32, which will be the secret key for the user.</p>
+// Also returns secret.otpauth_url, which we'll use later.
+</code></pre>
+<p>This will generate a secret key of length 32, which will be the secret key for the user.</p>
 <p>Now, we want to make sure that this secret works by validating the token that the user gets from it for the first time. In other words, we don't want to set this as the user's secret key just yet – we first want to verify their token for the first time. We need to persist the secret so that we can use it for token validation later.</p>
 <p>So, store one of the encodings for the secret, preferably <code>secret.base32</code>, somewhere temporary, since we'll use that in the future to authenticate the user's first token.</p>
 <pre class="prettyprint source lang-js"><code>// Example for storing the secret key somewhere (varies by implementation):
-user.two_factor_temp_secret = secret.base32;</code></pre><h3>Displaying a QR code</h3><p>Next, we'll want to display a QR code to the user so they can scan in the secret into their app. Google Authenticator and similar apps take in a QR code that holds a URL with the protocol <code>otpauth://</code>, which you get automatically from <code>secret.otpauth_url</code>.</p>
+user.two_factor_temp_secret = secret.base32;
+</code></pre>
+<h3>Displaying a QR code</h3>
+<p>Next, we'll want to display a QR code to the user so they can scan in the secret into their app. Google Authenticator and similar apps take in a QR code that holds a URL with the protocol <code>otpauth://</code>, which you get automatically from <code>secret.otpauth_url</code>.</p>
 <p>Use a QR code module to generate a QR code that stores the data in <code>secret.otpauth_url</code>, and then display the QR code to the user. This is one simple way to do it, which generates a PNG data URL which you can put into an <code>&lt;img&gt;</code> tag on a webpage:</p>
-<pre class="prettyprint source lang-js"><code>// Use the node-qrcode package
-// npm install --save node-qrcode
+<pre class="prettyprint source lang-js"><code>// Use the qrcode package
+// npm install --save qrcode
 var QRCode = require('qrcode');
 
 // Get the data URL of the authenticator URL
@@ -96,26 +107,42 @@ QRCode.toDataURL(secret.otpauth_url, function(err, data_url) {
   // Display this data URL to the user in an &lt;img> tag
   // Example:
   write('&lt;img src=&quot;' + data_url + '&quot;>');
-});</code></pre><p>Ask the user to scan this QR code into their authenticator app.</p>
-<h3>Verifying the token</h3><p>Finally, we want to make sure that the token on the server side and the token on the client side match. The best practice is to do a token check before fully enabling two-factor authenticaton for the user. This code applies to the first and subsequent token checks.</p>
+});
+</code></pre>
+<p>Ask the user to scan this QR code into their authenticator app.</p>
+<h3>Verifying the token</h3>
+<p>Finally, we want to make sure that the token on the server side and the token on the client side match. The best practice is to do a token check before fully enabling two-factor authenticaton for the user. This code applies to the first and subsequent token checks.</p>
 <p>After the user scans the QR code, ask the user to enter in the token that they see in their app. Then, verify it against the secret.</p>
 <pre class="prettyprint source lang-js"><code>// Let's say the user says that the token they have is 132890
 var userToken = '132890';
 
 // Let's say we stored the user's temporary secret in a user object like above:
 // (This is specific to your implementation)
-var base32secret = user.two_factor_temp_secret;</code></pre><pre class="prettyprint source lang-js"><code>// Use verify() to check the token against the secret
+var base32secret = user.two_factor_temp_secret;
+</code></pre>
+<pre class="prettyprint source lang-js"><code>// Use verify() to check the token against the secret
 var verified = speakeasy.totp.verify({ secret: base32secret,
                                        encoding: 'base32',
-                                       token: userToken });</code></pre><p><code>verified</code> will be true if the token is successfully verified, false if not.</p>
+                                       token: userToken });
+</code></pre>
+<p><code>verified</code> will be true if the token is successfully verified, false if not.</p>
 <p>If successfully verified, you can now save the secret to the user's account and use the same process above whenever you need to use two-factor to authenticate the user, like during login.</p>
 <pre class="prettyprint source lang-js"><code>// Example for saving user's token (varies by implementation):
 user.two_factor_secret = user.two_factor_temp_secret;
-user.two_factor_enabled = true</code></pre><p>Now you're done implementing two-factor authentication!</p>
+user.two_factor_enabled = true
+</code></pre>
+<p>Now you're done implementing two-factor authentication!</p>
 <p><a name="general-usage"></a></p>
-<h2>General Usage</h2><pre class="prettyprint source lang-js"><code>var speakeasy = require(&quot;speakeasy&quot;);</code></pre><h4>Generating a key</h4><pre class="prettyprint source lang-js"><code>// Generate a secret key.
+<h2>General Usage</h2>
+<pre class="prettyprint source lang-js"><code>var speakeasy = require(&quot;speakeasy&quot;);
+</code></pre>
+<h4>Generating a key</h4>
+<pre class="prettyprint source lang-js"><code>// Generate a secret key.
 var secret = speakeasy.generateSecret({length: 20});
-// Access using secret.ascii, secret.hex, or secret.base32.</code></pre><h4>Getting a time-based token for the current time</h4><pre class="prettyprint source lang-js"><code>// Generate a time-based token based on the base-32 key.
+// Access using secret.ascii, secret.hex, or secret.base32.
+</code></pre>
+<h4>Getting a time-based token for the current time</h4>
+<pre class="prettyprint source lang-js"><code>// Generate a time-based token based on the base-32 key.
 // HOTP (counter-based tokens) can also be used if `totp` is replaced by
 // `hotp` (i.e. speakeasy.hotp()) and a `counter` is given in the options.
 var token = speakeasy.totp({
@@ -124,14 +151,20 @@ var token = speakeasy.totp({
 });
 
 // Returns token for the secret at the current time
-// Compare this to user input</code></pre><h4>Verifying a token</h4><pre class="prettyprint source lang-js"><code>// Verify a given token
+// Compare this to user input
+</code></pre>
+<h4>Verifying a token</h4>
+<pre class="prettyprint source lang-js"><code>// Verify a given token
 var tokenValidates = speakeasy.totp.verify({
   secret: secret.base32,
   encoding: 'base32',
   token: '123456',
   window: 6
 });
-// Returns true if the token matches</code></pre><h4>Verifying a token and calculating a delta</h4><p>A TOTP is incremented every <code>step</code> time-step seconds. By default, the time-step
+// Returns true if the token matches
+</code></pre>
+<h4>Verifying a token and calculating a delta</h4>
+<p>A TOTP is incremented every <code>step</code> time-step seconds. By default, the time-step
 is 30 seconds. You may change the time-step using the <code>step</code> option, with units
 in seconds.</p>
 <pre class="prettyprint source lang-js"><code>// Verify a given token is within 3 time-steps (+/- 2 minutes) from the server
@@ -144,11 +177,25 @@ var tokenDelta = speakeasy.totp.verifyDelta({
   step: 60
 });
 // Returns {delta: 0} where the delta is the time step difference
-// between the given token and the current time</code></pre><h4>Getting a time-based token for a custom time</h4><pre class="prettyprint source lang-js"><code>var token = speakeasy.totp({
+// between the given token and the current time
+</code></pre>
+<h4>Getting a time-based token for a custom time</h4>
+<pre class="prettyprint source lang-js"><code>var token = speakeasy.totp({
   secret: secret.base32,
   encoding: 'base32',
   time: 1453667708 // specified in seconds
-});</code></pre><h4>Calculating a counter-based token</h4><pre class="prettyprint source lang-js"><code>// Get a counter-based token
+});
+
+// Verify a time-based token for a custom time
+var tokenValidates = speakeasy.totp.verify({
+  secret: secret.base32,
+  encoding: 'base32',
+  token: token,
+  time: 1453667708
+});
+</code></pre>
+<h4>Calculating a counter-based token</h4>
+<pre class="prettyprint source lang-js"><code>// Get a counter-based token
 var token = speakeasy.hotp({
   secret: secret.base32,
   encoding: 'base32',
@@ -161,38 +208,56 @@ var tokenValidates = speakeasy.hotp.verify({
   encoding: 'base32',
   token: '123456',
   counter: 123
-});</code></pre><h4>Using other encodings</h4><p>The default encoding (when <code>encoding</code> is not specified) is <code>ascii</code>.</p>
+});
+</code></pre>
+<h4>Using other encodings</h4>
+<p>The default encoding (when <code>encoding</code> is not specified) is <code>ascii</code>.</p>
 <pre class="prettyprint source lang-js"><code>// Specifying an ASCII token for TOTP
 // (encoding is 'ascii' by default)
 var token = speakeasy.totp({
   secret: secret.ascii
-});</code></pre><pre class="prettyprint source lang-js"><code>// Specifying a hex token for TOTP
+});
+</code></pre>
+<pre class="prettyprint source lang-js"><code>// Specifying a hex token for TOTP
 var token = speakeasy.totp({
   secret: secret.hex,
   encoding: 'hex'
-});</code></pre><h4>Using other hash algorithms</h4><p>The default hash algorithm is SHA1.</p>
+});
+</code></pre>
+<h4>Using other hash algorithms</h4>
+<p>The default hash algorithm is SHA1.</p>
 <pre class="prettyprint source lang-js"><code>// Specifying SHA256
 var token = speakeasy.totp({
   secret: secret.ascii,
   algorithm: 'sha256'
-});</code></pre><pre class="prettyprint source lang-js"><code>// Specifying SHA512
+});
+</code></pre>
+<pre class="prettyprint source lang-js"><code>// Specifying SHA512
 var token = speakeasy.totp({
   secret: secret.ascii,
   algorithm: 'sha512'
-});</code></pre><h4>Getting an otpauth:// URL and QR code for non-SHA1 hash algorithms</h4><pre class="prettyprint source lang-js"><code>// Generate a secret, if needed
+});
+</code></pre>
+<h4>Getting an otpauth:// URL and QR code for non-SHA1 hash algorithms</h4>
+<pre class="prettyprint source lang-js"><code>// Generate a secret, if needed
 var secret = speakeasy.generateSecret();
 // By default, generateSecret() returns an otpauth_url for SHA1
 
 // Use otpauthURL() to get a custom authentication URL for SHA512
 var url = speakeasy.otpauthURL({ secret: secret.ascii, label: 'Name of Secret', algorithm: 'sha512' });
 
-// Pass URL into a QR code generator</code></pre><h4>Specifying a window for verifying HOTP and TOTP</h4><p>Verify a HOTP token with counter value 42 and a window of 10. HOTP has a one-sided window, so this will check counter values from 42 to 52, inclusive, and return a <code>{ delta: n }</code> where <code>n</code> is the difference between the given counter value and the counter position at which the token was found, or <code>undefined</code> if it was not found within the window. See the <a href="#totp.verifyDelta"><code>hotp.verifyDelta(options)</code></a> documentation for more info.</p>
+// Pass URL into a QR code generator
+</code></pre>
+<h4>Specifying a window for verifying HOTP and TOTP</h4>
+<p>Verify a HOTP token with counter value 42 and a window of 10. HOTP has a one-sided window, so this will check counter values from 42 to 52, inclusive, and return a <code>{ delta: n }</code> where <code>n</code> is the difference between the given counter value and the counter position at which the token was found, or <code>undefined</code> if it was not found within the window. See the <a href="#totp.verifyDelta"><code>hotp.verifyDelta(options)</code></a> documentation for more info.</p>
 <pre class="prettyprint source lang-js"><code>var token = speakeasy.hotp.verifyDelta({
   secret: secret.ascii,
   counter: 42,
   token: '123456',
   window: 10
-});</code></pre><p>How this works:</p>
+});
+</code></pre>
+<p>How this works:</p>
 <pre class="prettyprint source lang-js"><code>// Set ASCII secret
 var secret = 'rNONHRni6BAk7y2TiKrv';
 
@@ -224,18 +289,23 @@ speakeasy.hotp.verify({ secret: secret, counter: 42, token: counter45, window: 1
 
 // Not in window: specify a window of 1, which only tests counters 42 and 43, not 45
 speakeasy.hotp.verify({ secret: secret, counter: 42, token: counter45, window: 1 });
-// => false</code></pre><p>Verify a TOTP token at the current time with a window of 2. Since the default time step is 30 seconds, and TOTP has a two-sided window, this will check tokens between [current time minus two tokens before] and [current time plus two tokens after]. In other words, with a time step of 30 seconds, it will check the token at the current time, plus the tokens at the current time minus 30 seconds, minus 60 seconds, plus 30 seconds, and plus 60 seconds – basically, it will check tokens between a minute ago and a minute from now. It will return a <code>{ delta: n }</code> where <code>n</code> is the difference between the current time step and the counter position at which the token was found, or <code>undefined</code> if it was not found within the window. See the <a href="#totp.verifyDelta"><code>totp.verifyDelta(options)</code></a> documentation for more info.</p>
+// => false
+</code></pre>
+<p>Verify a TOTP token at the current time with a window of 2. Since the default time step is 30 seconds, and TOTP has a two-sided window, this will check tokens between [current time minus two tokens before] and [current time plus two tokens after]. In other words, with a time step of 30 seconds, it will check the token at the current time, plus the tokens at the current time minus 30 seconds, minus 60 seconds, plus 30 seconds, and plus 60 seconds – basically, it will check tokens between a minute ago and a minute from now. It will return a <code>{ delta: n }</code> where <code>n</code> is the difference between the current time step and the counter position at which the token was found, or <code>undefined</code> if it was not found within the window. See the <a href="#totp.verifyDelta"><code>totp.verifyDelta(options)</code></a> documentation for more info.</p>
 <pre class="prettyprint source lang-js"><code>var verified = speakeasy.totp.verifyDelta({
   secret: secret.ascii,
   token: '123456',
   window: 2
-});</code></pre><p>The mechanics of TOTP windows are the same as for HOTP, as shown above, just with two-sided windows, meaning that the <code>delta</code> value can be negative if the token is found before the given time or counter.</p>
+});
+</code></pre>
+<p>The mechanics of TOTP windows are the same as for HOTP, as shown above, just with two-sided windows, meaning that the <code>delta</code> value can be negative if the token is found before the given time or counter.</p>
 <pre class="prettyprint source lang-js"><code>var secret = 'rNONHRni6BAk7y2TiKrv';
 
 // By way of example, we will force TOTP to return tokens at time 1453853945 and
 // at time 1453854005 (60 seconds ahead, or 2 steps ahead)
 var token1 = speakeasy.totp({ secret: secret, time: 1453853945 }); // 625175
 var token3 = speakeasy.totp({ secret: secret, time: 1453854005 }); // 222636
+var token2 = speakeasy.totp({ secret: secret, time: 1453854065 }); // 013052
 
 // We can check the time at token 3, 1453853975, with token 1, but use a window of 2
 // With a time step of 30 seconds, this will check all tokens from 60 seconds 
@@ -243,13 +313,29 @@ var token3 = speakeasy.totp({ secret: secret, time: 1453854005 }); // 222636
 speakeasy.totp.verifyDelta({ secret: secret, token: token1, window: 2, time: 1453854005 });
 // => { delta: -2 }
 
+// token is valid because because token is 60 seconds before time
+speakeasy.totp.verify({ secret: secret, token: token1, window: 2, time: 1453854005 });
+// => true
+
+// token is valid because because token is 0 seconds before time
+speakeasy.totp.verify({ secret: secret, token: token3, window: 2, time: 1453854005 });
+// => true
+
+// token is valid because because token is 60 seconds after time
+speakeasy.totp.verify({ secret: secret, token: token2, window: 2, time: 1453854005 });
+// => true
+
 // This signifies that the given token, token1, is -2 steps away from
 // the given time, which means that it is the token for the value at
-// (-2 * time step) = (-2 * 30 seconds) = 60 seconds ago.</code></pre><p>As shown previously, you can also change <code>verifyDelta()</code> to <code>verify()</code> to simply return a boolean if the given token is within the given window.</p>
+// (-2 * time step) = (-2 * 30 seconds) = 60 seconds ago.
+</code></pre>
+<p>As shown previously, you can also change <code>verifyDelta()</code> to <code>verify()</code> to simply return a boolean if the given token is within the given window.</p>
 <p><a name="documentation"></a></p>
-<h2>Documentation</h2><p>Full API documentation (in JSDoc format) is available below and at http://speakeasyjs.github.io/speakeasy/</p>
+<h2>Documentation</h2>
+<p>Full API documentation (in JSDoc format) is available below and at http://speakeasyjs.github.io/speakeasy/</p>
 <p><a href="http://speakeasyjs.github.io/speakeasy/"><img src="http://i.imgur.com/hD9w41T.png" height="43"></a></p>
-<h3>Functions</h3><dl>
+<h3>Functions</h3>
+<dl>
 <dt><a href="#digest">digest(options)</a> ⇒ <code>Buffer</code></dt>
 <dd><p>Digest the one-time passcode options.</p>
 </dd>
@@ -277,7 +363,7 @@ verifies.
 <dd><p>Generates a random secret with the set A-Z a-z 0-9 and symbols, of any length
 (default 32).</p>
 </dd>
-<dt><a href="#generateSecretASCII">generateSecretASCII([length], [symbols])</a> ⇒ <code>String</code></dt>
+<dt><a href="#generateSecretASCII">generateSecretASCII([length], [options])</a> ⇒ <code>String</code></dt>
 <dd><p>Generates a key of a certain length (default 32) from A-Z, a-z, 0-9, and
 symbols (if requested).</p>
 </dd>
@@ -285,16 +371,16 @@ symbols (if requested).</p>
 <dd><p>Generate an URL for use with the Google Authenticator app.</p>
 </dd>
 </dl>
-
-<h3>Typedefs</h3><dl>
+<h3>Typedefs</h3>
+<dl>
 <dt><a href="#GeneratedSecret">GeneratedSecret</a> : <code>Object</code></dt>
 <dd></dd>
 </dl>
-
 <p><a name="digest"></a></p>
-<h3>digest(options) ⇒ <code>Buffer</code></h3><p>Digest the one-time passcode options.</p>
-<p><strong>Kind</strong>: function  </p>
-<p><strong>Returns</strong>: <code>Buffer</code> - The one-time passcode as a buffer.  </p>
+<h3>digest(options) ⇒ <code>Buffer</code></h3>
+<p>Digest the one-time passcode options.</p>
+<p><strong>Kind</strong>: function</p>
+<p><strong>Returns</strong>: <code>Buffer</code> - The one-time passcode as a buffer.</p>
 <table>
 <thead>
 <tr>
@@ -344,12 +430,13 @@ symbols (if requested).</p>
 </tbody>
 </table>
 <p><a name="hotp"></a></p>
-<h3>hotp(options) ⇒ <code>String</code></h3><p>Generate a counter-based one-time token. Specify the key and counter, and
+<h3>hotp(options) ⇒ <code>String</code></h3>
+<p>Generate a counter-based one-time token. Specify the key and counter, and
 receive the one-time password for that counter position as a string. You can
 also specify a token length, as well as the encoding (ASCII, hexadecimal, or
 base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
-<p><strong>Kind</strong>: function  </p>
-<p><strong>Returns</strong>: <code>String</code> - The one-time passcode.  </p>
+<p><strong>Kind</strong>: function</p>
+<p><strong>Returns</strong>: <code>String</code> - The one-time passcode.</p>
 <table>
 <thead>
 <tr>
@@ -417,7 +504,8 @@ base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
 </tbody>
 </table>
 <p><a name="hotp.verifyDelta"></a></p>
-<h3>hotp.verifyDelta(options) ⇒ <code>Object</code></h3><p>Verify a counter-based one-time token against the secret and return the delta.
+<h3>hotp.verifyDelta(options) ⇒ <code>Object</code></h3>
+<p>Verify a counter-based one-time token against the secret and return the delta.
 By default, it verifies the token at the given counter value, with no leeway
 (no look-ahead or look-behind). A token validated at the current counter value
 will have a delta of 0.</p>
@@ -428,10 +516,10 @@ as well as <code>window</code> tokens ahead (one-sided window). See param for mo
 and the given counter value. For example, if given a counter 5 and a window
 10, <code>verifyDelta()</code> will look at tokens from 5 to 15, inclusive. If it finds
 it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
-<p><strong>Kind</strong>: function  </p>
+<p><strong>Kind</strong>: function</p>
 <p><strong>Returns</strong>: <code>Object</code> - On success, returns an object with the counter
-  difference between the client and the server as the <code>delta</code> property (i.e.
-  <code>{ delta: 0 }</code>).  </p>
+difference between the client and the server as the <code>delta</code> property (i.e.
+<code>{ delta: 0 }</code>).</p>
 <table>
 <thead>
 <tr>
@@ -493,13 +581,14 @@ it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
 </tbody>
 </table>
 <p><a name="hotp.verify"></a></p>
-<h3>hotp.verify(options) ⇒ <code>Boolean</code></h3><p>Verify a counter-based one-time token against the secret and return true if it
+<h3>hotp.verify(options) ⇒ <code>Boolean</code></h3>
+<p>Verify a counter-based one-time token against the secret and return true if it
 verifies. Helper function for `hotp.verifyDelta()`` that returns a boolean
 instead of an object. For more on how to use a window with this, see
 hotp.verifyDelta.</p>
-<p><strong>Kind</strong>: function  </p>
+<p><strong>Kind</strong>: function</p>
 <p><strong>Returns</strong>: <code>Boolean</code> - Returns true if the token matches within the given
-  window, false otherwise.  </p>
+window, false otherwise.</p>
 <table>
 <thead>
 <tr>
@@ -561,7 +650,8 @@ hotp.verifyDelta.</p>
 </tbody>
 </table>
 <p><a name="totp"></a></p>
-<h3>totp(options) ⇒ <code>String</code></h3><p>Generate a time-based one-time token. Specify the key, and receive the
+<h3>totp(options) ⇒ <code>String</code></h3>
+<p>Generate a time-based one-time token. Specify the key, and receive the
 one-time password for that time as a string. By default, it uses the current
 time and a time step of 30 seconds, so there is a new token every 30 seconds.
 You may override the time step and epoch for custom timing. You can also
@@ -569,8 +659,8 @@ specify a token length, as well as the encoding (ASCII, hexadecimal, or
 base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
 <p>Under the hood, TOTP calculates the counter value by finding how many time
 steps have passed since the epoch, and calls HOTP with that counter value.</p>
-<p><strong>Kind</strong>: function  </p>
-<p><strong>Returns</strong>: <code>String</code> - The one-time passcode.  </p>
+<p><strong>Kind</strong>: function</p>
+<p><strong>Returns</strong>: <code>String</code> - The one-time passcode.</p>
 <table>
 <thead>
 <tr>
@@ -656,7 +746,8 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
 </tbody>
 </table>
 <p><a name="totp.verifyDelta"></a></p>
-<h3>totp.verifyDelta(options) ⇒ <code>Object</code></h3><p>Verify a time-based one-time token against the secret and return the delta.
+<h3>totp.verifyDelta(options) ⇒ <code>Object</code></h3>
+<p>Verify a time-based one-time token against the secret and return the delta.
 By default, it verifies the token at the current time window, with no leeway
 (no look-ahead or look-behind). A token validated at the current time window
 will have a delta of 0.</p>
@@ -666,15 +757,15 @@ as well as <code>window</code> tokens ahead and <code>window</code> tokens behin
 window). See param for more info.</p>
 <p><code>verifyDelta()</code> will return the delta between the counter value of the token
 and the given counter value. For example, if given a time at counter 1000 and
-a window of 5, <code>verifyDelta()</code> will look at tokens from 995 to 1005,
+a window of 5, <code>verifyDelta()</code> will look at tokens from 995 to 1005,
 inclusive. In other words, if the time-step is 30 seconds, it will look at
 tokens from 2.5 minutes ago to 2.5 minutes in the future, inclusive.
 If it finds it at counter position 1002, it will return <code>{ delta: 2 }</code>.
 If it finds it at counter position 997, it will return <code>{ delta: -3 }</code>.</p>
-<p><strong>Kind</strong>: function  </p>
+<p><strong>Kind</strong>: function</p>
 <p><strong>Returns</strong>: <code>Object</code> - On success, returns an object with the time step
-  difference between the client and the server as the <code>delta</code> property (e.g.
-  <code>{ delta: 0 }</code>).  </p>
+difference between the client and the server as the <code>delta</code> property (e.g.
+<code>{ delta: 0 }</code>).</p>
 <table>
 <thead>
 <tr>
@@ -754,12 +845,13 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
 </tbody>
 </table>
 <p><a name="totp.verify"></a></p>
-<h3>totp.verify(options) ⇒ <code>Boolean</code></h3><p>Verify a time-based one-time token against the secret and return true if it
+<h3>totp.verify(options) ⇒ <code>Boolean</code></h3>
+<p>Verify a time-based one-time token against the secret and return true if it
 verifies. Helper function for verifyDelta() that returns a boolean instead of
 an object. For more on how to use a window with this, see totp.verifyDelta.</p>
 <p><strong>Kind</strong>: function</p>
 <p><strong>Returns</strong>: <code>Boolean</code> - Returns true if the token matches within the given
-  window, false otherwise.  </p>
+window, false otherwise.</p>
 <table>
 <thead>
 <tr>
@@ -839,12 +931,13 @@ an object. For more on how to use a window with this, see totp.verifyDelta.</p>
 </tbody>
 </table>
 <p><a name="generateSecret"></a></p>
-<h3>generateSecret(options) ⇒ <code>Object</code> &#124; <code><a href="#GeneratedSecret">GeneratedSecret</a></code></h3><p>Generates a random secret with the set A-Z a-z 0-9 and symbols, of any length
+<h3>generateSecret(options) ⇒ <code>Object</code> | <code><a href="#GeneratedSecret">GeneratedSecret</a></code></h3>
+<p>Generates a random secret with the set A-Z a-z 0-9 and symbols, of any length
 (default 32). Returns the secret key in ASCII, hexadecimal, and base32 format,
 along with the URL used for the QR code for Google Authenticator (an otpauth
 URL). Use a QR code library to generate a QR code based on the Google
 Authenticator URL to obtain a QR code you can scan into the app.</p>
-<p><strong>Kind</strong>: function    </p>
+<p><strong>Kind</strong>: function</p>
 <p><strong>Returns</strong>: A <a href="#GeneratedSecret"><code>GeneratedSecret</code></a> object</p>
 <table>
 <thead>
@@ -867,6 +960,12 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
 <td><code>Integer</code></td>
 <td><code>32</code></td>
 <td>Length of the secret</td>
+</tr>
+<tr>
+<td>[options.secret]</td>
+<td><a href="#SecretOptions"><code>SecretOptions</code></a></td>
+<td><code>{}</code></td>
+<td></td>
 </tr>
 <tr>
 <td>[options.symbols]</td>
@@ -898,13 +997,20 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
 <td><code>false</code></td>
 <td>(DEPRECATED. Do not use to   prevent leaking of secret to a third party. Use your own QR code   implementation.) Output a Google Authenticator otpauth:// QR code URL.</td>
 </tr>
+<tr>
+<td>[options.issuer]</td>
+<td><code>String</code></td>
+<td></td>
+<td>The provider or service with which the secret key is associated.</td>
+</tr>
 </tbody>
 </table>
 <p><a name="generateSecretASCII"></a></p>
-<h3>generateSecretASCII([length], [symbols]) ⇒ <code>String</code></h3><p>Generates a key of a certain length (default 32) from A-Z, a-z, 0-9, and
+<h3>generateSecretASCII([length], [options]) ⇒ <code>String</code></h3>
+<p>Generates a key of a certain length (default 32) from A-Z, a-z, 0-9, and
 symbols (if requested).</p>
-<p><strong>Kind</strong>: function  </p>
-<p><strong>Returns</strong>: <code>String</code> - The generated key.  </p>
+<p><strong>Kind</strong>: function</p>
+<p><strong>Returns</strong>: <code>String</code> - The generated key.</p>
 <table>
 <thead>
 <tr>
@@ -922,15 +1028,16 @@ symbols (if requested).</p>
 <td>The length of the key.</td>
 </tr>
 <tr>
-<td>[symbols]</td>
-<td><code>Boolean</code></td>
-<td><code>false</code></td>
-<td>Whether to include symbols in the key.</td>
+<td>[options]</td>
+<td><a href="#SecretOptions"><code>SecretOptions</code></a></td>
+<td><code>{}</code></td>
+<td></td>
 </tr>
 </tbody>
 </table>
 <p><a name="otpauthURL"></a></p>
-<h3>otpauthURL(options) ⇒ <code>String</code></h3><p>Generate a Google Authenticator-compatible otpauth:// URL for passing the
+<h3>otpauthURL(options) ⇒ <code>String</code></h3>
+<p>Generate a Google Authenticator-compatible otpauth:// URL for passing the
 secret to a mobile device to install the secret.</p>
 <p>Authenticator considers TOTP codes valid for 30 seconds. Additionally,
 the app presents 6 digits codes to the user. According to the
@@ -938,15 +1045,15 @@ documentation, the period and number of digits are currently ignored by
 the app.</p>
 <p>To generate a suitable QR Code, pass the generated URL to a QR Code
 generator, such as the <code>qr-image</code> module.</p>
-<p><strong>Kind</strong>: function  </p>
+<p><strong>Kind</strong>: function</p>
 <p><strong>Throws</strong>: Error if secret or label is missing, or if hotp is used and a
-  counter is missing, if the type is not one of <code>hotp</code> or <code>totp</code>, if the
-  number of digits is non-numeric, or an invalid period is used. Warns if
-  the number of digits is not either 6 or 8 (though 6 is the only one
-  supported by Google Authenticator), and if the hashihng algorithm is
-  not one of the supported SHA1, SHA256, or SHA512.</p>
-<p><strong>Returns</strong>: <code>String</code> - A URL suitable for use with the Google Authenticator.  </p>
-<p><strong>See</strong>: https://github.com/google/google-authenticator/wiki/Key-Uri-Format  </p>
+counter is missing, if the type is not one of <code>hotp</code> or <code>totp</code>, if the
+number of digits is non-numeric, or an invalid period is used. Warns if
+the number of digits is not either 6 or 8 (though 6 is the only one
+supported by Google Authenticator), and if the hashihng algorithm is
+not one of the supported SHA1, SHA256, or SHA512.</p>
+<p><strong>Returns</strong>: <code>String</code> - A URL suitable for use with the Google Authenticator.</p>
+<p><strong>See</strong>: https://github.com/google/google-authenticator/wiki/Key-Uri-Format</p>
 <table>
 <thead>
 <tr>
@@ -1014,13 +1121,14 @@ generator, such as the <code>qr-image</code> module.</p>
 <tr>
 <td>[options.encoding]</td>
 <td><code>String</code></td>
-<td></td>
+<td><code>ascii</code></td>
 <td>Key encoding (ascii, hex, base32,   base64). If the key is not encoded in Base-32, it will be reencoded.</td>
 </tr>
 </tbody>
 </table>
 <p><a name="GeneratedSecret"></a></p>
-<h3>GeneratedSecret : <code>Object</code></h3><p><strong>Kind</strong>: global typedef  </p>
+<h3>GeneratedSecret : <code>Object</code></h3>
+<p><strong>Kind</strong>: global typedef</p>
 <p><strong>Properties</strong></p>
 <table>
 <thead>
@@ -1073,8 +1181,68 @@ generator, such as the <code>qr-image</code> module.</p>
 </tr>
 </tbody>
 </table>
+<p><a name="SecretOptions"></a></p>
+<h3>SecretOptions : <code>Object</code></h3>
+<p><strong>Kind</strong>: global typedef</p>
+<p><strong>Properties</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Attributes</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>symbols</td>
+<td><code>Boolean</code></td>
+<td><optional></td>
+<td><code>true</code></td>
+<td>Include symbols ( e.g. @#$% ).</td>
+</tr>
+<tr>
+<td>numbers</td>
+<td><code>Boolean</code></td>
+<td><optional></td>
+<td><code>true</code></td>
+<td>Include numbers ( e.g. 123456 ).</td>
+</tr>
+<tr>
+<td>lowercase</td>
+<td><code>Boolean</code></td>
+<td><optional></td>
+<td><code>true</code></td>
+<td>Include lowercase characters ( e.g. abcdefgh ).</td>
+</tr>
+<tr>
+<td>uppercase</td>
+<td><code>Boolean</code></td>
+<td><optional></td>
+<td><code>true</code></td>
+<td>Include uppercase characters ( e.g. ABCDEFGH ).</td>
+</tr>
+<tr>
+<td>similar</td>
+<td><code>Boolean</code></td>
+<td><optional></td>
+<td><code>true</code></td>
+<td>Include similar characters ( e.g. i, l, 1, L, o, 0, O ).</td>
+</tr>
+<tr>
+<td>ambiguous</td>
+<td><code>Boolean</code></td>
+<td><optional></td>
+<td><code>true</code></td>
+<td>Include ambiguous characters ( ( ) &lt; &gt; / [ ] { } , . : ; ).</td>
+</tr>
+</tbody>
+</table>
 <p><a name="contributing"></a></p>
-<h2>Contributing</h2><p>We're very happy to have your contributions in Speakeasy.</p>
+<h2>Contributing</h2>
+<p>We're very happy to have your contributions in Speakeasy.</p>
 <p><strong>Contributing code</strong> — First, make sure you've added tests if adding new functionality. Then, run <code>npm test</code> to run all the tests to make sure they pass. Next, make a pull request to this repo. Thanks!</p>
 <p><strong>Filing an issue</strong> — Submit issues to the <a href="https://github.com/speakeasyjs/speakeasy">GitHub Issues</a> page.</p>
 <p><strong>Maintainers</strong> —</p>
@@ -1082,7 +1250,8 @@ generator, such as the <code>qr-image</code> module.</p>
 <li>Mark Bao (<a href="https://github.com/markbao">markbao</a>)</li>
 <li>Michael Phan-Ba (<a href="https://github.com/mikepb">mikepb</a>)</li>
 </ul>
-<h2>License</h2><p>This project incorporates code from <a href="http://github.com/mikepb/passcode">passcode</a>, which was originally a
+<h2>License</h2>
+<p>This project incorporates code from <a href="http://github.com/mikepb/passcode">passcode</a>, which was originally a
 fork of speakeasy, and <a href="https://github.com/guyht/notp">notp</a>, both of which are licensed under MIT.
 Please see the <a href="LICENSE">LICENSE</a> file for the full combined license.</p>
 <p>Icons created by Gregor Črešnar, iconoci, and Danny Sturgess from the Noun
@@ -1103,7 +1272,7 @@ Project.</p></article>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jan 27 2016 01:23:54 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Aug 23 2019 11:32:48 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

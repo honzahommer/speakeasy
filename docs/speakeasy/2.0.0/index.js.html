@@ -65,12 +65,29 @@ exports.digest = function digest (options) {
 
   // convert secret to buffer
   if (!Buffer.isBuffer(secret)) {
-    secret = encoding === 'base32' ? base32.decode(secret)
-      : new Buffer(secret, encoding);
+    if (encoding === 'base32') { secret = base32.decode(secret); }
+    secret = Buffer.from(secret, encoding);
+  }
+
+  var secretBufferSize;
+  if (algorithm === 'sha1') {
+    secretBufferSize = 20; // 20 bytes
+  } else if (algorithm === 'sha256') {
+    secretBufferSize = 32; // 32 bytes
+  } else if (algorithm === 'sha512') {
+    secretBufferSize = 64; // 64 bytes
+  } else {
+    console.warn('Speakeasy - The algorithm provided (`' + algorithm + '`) is not officially supported, results may be different than expected.');
+  }
+
+  // The secret for sha1, sha256 and sha512 needs to be a fixed number of bytes for the one-time-password to be calculated correctly
+  // Pad the buffer to the correct size be repeating the secret to the desired length
+  if (secretBufferSize &amp;&amp; secret.length !== secretBufferSize) {
+    secret = Buffer.from(Array(Math.ceil(secretBufferSize / secret.length) + 1).join(secret.toString('hex')), 'hex').slice(0, secretBufferSize);
   }
 
   // create an buffer from the counter
-  var buf = new Buffer(8);
+  var buf = Buffer.allocUnsafe(8);
   var tmp = counter;
   for (i = 0; i &lt; 8; i++) {
     // mask 0xff over number to get last 8
@@ -114,6 +131,21 @@ exports.digest = function digest (options) {
  */
 
 exports.hotp = function hotpGenerate (options) {
+  // verify secret and counter exists
+  var secret = options.secret;
+  var key = options.key;
+  var counter = options.counter;
+
+  if (key === null || typeof key === 'undefined') {
+    if (secret === null || typeof secret === 'undefined') {
+      throw new Error('Speakeasy - hotp - Missing secret');
+    }
+  }
+
+  if (counter === null || typeof counter === 'undefined') {
+    throw new Error('Speakeasy - hotp - Missing counter');
+  }
+
   // unpack digits
   // backward compatibility: `length` is also accepted here, but deprecated
   var digits = (options.digits != null ? options.digits : options.length) || 6;
@@ -184,8 +216,14 @@ exports.hotp.verifyDelta = function hotpVerifyDelta (options) {
   // shadow options
   options = Object.create(options);
 
+  // verify secret and token exist
+  var secret = options.secret;
+  var token = options.token;
+  if (secret === null || typeof secret === 'undefined') throw new Error('Speakeasy - hotp.verifyDelta - Missing secret');
+  if (token === null || typeof token === 'undefined') throw new Error('Speakeasy - hotp.verifyDelta - Missing token');
+
   // unpack options
-  var token = String(options.token);
+  token = String(options.token);
   var digits = parseInt(options.digits, 10) || 6;
   var window = parseInt(options.window, 10) || 0;
   var counter = parseInt(options.counter, 10) || 0;
@@ -209,7 +247,7 @@ exports.hotp.verifyDelta = function hotpVerifyDelta (options) {
     // domain-specific constant-time comparison for integer codes
     if (parseInt(exports.hotp(options), 10) === token) {
       // found a matching code, return delta
-      return {delta: i - counter};
+      return { delta: i - counter };
     }
   }
 
@@ -314,6 +352,15 @@ exports.totp = function totpGenerate (options) {
   // shadow options
   options = Object.create(options);
 
+  // verify secret exists if key is not specified
+  var key = options.key;
+  var secret = options.secret;
+  if (key === null || typeof key === 'undefined') {
+    if (secret === null || typeof secret === 'undefined') {
+      throw new Error('Speakeasy - totp - Missing secret');
+    }
+  }
+
   // calculate default counter value
   if (options.counter == null) options.counter = exports._counter(options);
 
@@ -373,6 +420,11 @@ exports.time = exports.totp;
 exports.totp.verifyDelta = function totpVerifyDelta (options) {
   // shadow options
   options = Object.create(options);
+  // verify secret and token exist
+  var secret = options.secret;
+  var token = options.token;
+  if (secret === null || typeof secret === 'undefined') throw new Error('Speakeasy - totp.verifyDelta - Missing secret');
+  if (token === null || typeof token === 'undefined') throw new Error('Speakeasy - totp.verifyDelta - Missing token');
 
   // unpack options
   var window = parseInt(options.window, 10) || 0;
@@ -431,6 +483,17 @@ exports.totp.verify = function totpVerify (options) {
 };
 
 /**
+ * @typedef SecretOptions
+ * @type Object
+ * @property {Boolean} [symbols=true] Include symbols ( e.g. @#$% ).
+ * @property {Boolean} [numbers=true] Include numbers ( e.g. 123456 ).
+ * @property {Boolean} [lowercase=true] Include lowercase characters ( e.g. abcdefgh ).
+ * @property {Boolean} [uppercase=true] Include uppercase characters ( e.g. ABCDEFGH ).
+ * @property {Boolean} [similar=true] Include similar characters ( e.g. i, l, 1, L, o, 0, O ).
+ * @property {Boolean} [ambiguous=true] Include ambiguous characters ( ( ) &lt; > / [ ] { } , . : ; ).
+ */
+
+/**
  * @typedef GeneratedSecret
  * @type Object
  * @property {String} ascii ASCII representation of the secret
@@ -453,8 +516,9 @@ exports.totp.verify = function totpVerify (options) {
  *
  * @param {Object} options
  * @param {Integer} [options.length=32] Length of the secret
+ * @param {SecretOptions} [options.secret={}]
  * @param {Boolean} [options.symbols=false] Whether to include symbols
- * @param {Boolean} [options.otpauth_url=true] Whether to output a Google
+ * @param {Boolean|String} [options.otpauth_url='ascii'] Whether to output a Google
  *   Authenticator-compatible otpauth:// URL (only returns otpauth:// URL, no
  *   QR code)
  * @param {String} [options.name] The name to use with Google Authenticator.
@@ -464,6 +528,8 @@ exports.totp.verify = function totpVerify (options) {
  * @param {Boolean} [options.google_auth_qr=false] (DEPRECATED. Do not use to
  *   prevent leaking of secret to a third party. Use your own QR code
  *   implementation.) Output a Google Authenticator otpauth:// QR code URL.
+ * @param {String} [options.issuer=''] The provider or service with which the
+ *   secret key is associated.
  * @return {Object}
  * @return {GeneratedSecret} The generated secret key.
  */
@@ -471,28 +537,29 @@ exports.generateSecret = function generateSecret (options) {
   // options
   if (!options) options = {};
   var length = options.length || 32;
-  var name = encodeURIComponent(options.name || 'SecretKey');
-  var qr_codes = options.qr_codes || false;
-  var google_auth_qr = options.google_auth_qr || false;
-  var otpauth_url = options.otpauth_url != null ? options.otpauth_url : true;
-  var symbols = true;
+  var name = options.name || 'SecretKey';
+  var qrCodes = options.qr_codes || false;
+  var googleAuthQr = options.google_auth_qr || false;
+  var otpauthUrl = options.otpauth_url != null ? options.otpauth_url : true;
+  var secret = options.secret || {};
+  var issuer = options.issuer;
 
   // turn off symbols only when explicity told to
   if (options.symbols !== undefined &amp;&amp; options.symbols === false) {
-    symbols = false;
+    secret.symbols = false;
   }
 
   // generate an ascii key
-  var key = this.generateSecretASCII(length, symbols);
+  var key = this.generateSecretASCII(length, secret);
 
   // return a SecretKey with ascii, hex, and base32
   var SecretKey = {};
   SecretKey.ascii = key;
-  SecretKey.hex = Buffer(key, 'ascii').toString('hex');
-  SecretKey.base32 = base32.encode(Buffer(key)).toString().replace(/=/g, '');
+  SecretKey.hex = Buffer.from(key, 'ascii').toString('hex');
+  SecretKey.base32 = base32.encode(Buffer.from(key)).toString().replace(/=/g, '');
 
   // generate some qr codes if requested
-  if (qr_codes) {
+  if (qrCodes) {
     console.warn('Speakeasy - Deprecation Notice - generateSecret() QR codes are deprecated and no longer supported. Please use your own QR code implementation.');
     SecretKey.qr_code_ascii = 'https://chart.googleapis.com/chart?chs=166x166&amp;chld=L|0&amp;cht=qr&amp;chl=' + encodeURIComponent(SecretKey.ascii);
     SecretKey.qr_code_hex = 'https://chart.googleapis.com/chart?chs=166x166&amp;chld=L|0&amp;cht=qr&amp;chl=' + encodeURIComponent(SecretKey.hex);
@@ -500,15 +567,16 @@ exports.generateSecret = function generateSecret (options) {
   }
 
   // add in the Google Authenticator-compatible otpauth URL
-  if (otpauth_url) {
+  if (otpauthUrl) {
     SecretKey.otpauth_url = exports.otpauthURL({
-      secret: SecretKey.ascii,
-      label: name
+      secret: SecretKey[typeof otpauthUrl !== 'string' ? 'ascii' : otpauthUrl],
+      label: name,
+      issuer: issuer
     });
   }
 
   // generate a QR code for use in Google Authenticator if requested
-  if (google_auth_qr) {
+  if (googleAuthQr) {
     console.warn('Speakeasy - Deprecation Notice - generateSecret() Google Auth QR code is deprecated and no longer supported. Please use your own QR code implementation.');
     SecretKey.google_auth_qr = 'https://chart.googleapis.com/chart?chs=166x166&amp;chld=L|0&amp;cht=qr&amp;chl=' + encodeURIComponent(exports.otpauthURL({ secret: SecretKey.base32, label: name }));
   }
@@ -525,15 +593,27 @@ exports.generate_key = util.deprecate(function (options) {
  * Generates a key of a certain length (default 32) from A-Z, a-z, 0-9, and
  * symbols (if requested).
  *
- * @param  {Integer} [length=32]  The length of the key.
- * @param  {Boolean} [symbols=false] Whether to include symbols in the key.
- * @return {String} The generated key.
+ * @param {Integer} [length=32]  The length of the key.
+ * @param {SecretOptions} [options={}]
  */
-exports.generateSecretASCII = function generateSecretASCII (length, symbols) {
+exports.generateSecretASCII = function generateSecretASCII (length, options) {
+  var defaults = { symbols: true, numbers: true, lowercase: true, uppercase: true, similar: true, ambiguous: true };
+  options = Object.assign({}, defaults, options || {});
+
   var bytes = crypto.randomBytes(length || 32);
-  var set = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-  if (symbols) {
-    set += '!@#$%^&amp;*()&lt;>?/[]{},.:;';
+  var letters = 'abcdefghjkmnpqrstuvwxyz';
+  var numbers = '23456789';
+  var symbols = '!@#$%^&amp;*?';
+
+  var set = '';
+  if (options.similar) { letters += 'ilo'; numbers += '01'; }
+  if (options.ambiguous) symbols += '()&lt;>/[]{},.:;';
+  if (options.lowercase) set += letters;
+  if (options.uppercase) set += letters.toUpperCase();
+  if (options.numbers) set += numbers;
+  if (options.symbols) set += symbols;
+  if (set === '') {
+    throw new Error('Speakeasy - generateSecretASCII - Invalid options `' + options + '`; must have at least one of these propertiest enabled: lowercase, uppercase, numbers, symbols');
   }
 
   var output = '';
@@ -595,9 +675,9 @@ exports.otpauthURL = function otpauthURL (options) {
   var issuer = options.issuer;
   var type = (options.type || 'totp').toLowerCase();
   var counter = options.counter;
-  var algorithm = options.algorithm;
-  var digits = options.digits;
-  var period = options.period;
+  var algorithm = (options.algorithm || 'sha1').toLowerCase();
+  var digits = options.digits || 6;
+  var period = options.period || 30;
   var encoding = options.encoding || 'ascii';
 
   // validate type
@@ -619,12 +699,15 @@ exports.otpauthURL = function otpauthURL (options) {
   }
 
   // convert secret to base32
-  if (encoding !== 'base32') secret = new Buffer(secret, encoding);
+  if (encoding !== 'base32') secret = Buffer.from(secret, encoding);
   if (Buffer.isBuffer(secret)) secret = base32.encode(secret);
 
   // build query while validating
-  var query = {secret: secret};
+  var query = { secret: secret };
   if (issuer) query.issuer = issuer;
+  if (type === 'hotp') {
+    query.counter = counter;
+  }
 
   // validate algorithm
   if (algorithm != null) {
@@ -669,7 +752,7 @@ exports.otpauthURL = function otpauthURL (options) {
     protocol: 'otpauth',
     slashes: true,
     hostname: type,
-    pathname: label,
+    pathname: encodeURIComponent(label),
     query: query
   });
 };
@@ -689,7 +772,7 @@ exports.otpauthURL = function otpauthURL (options) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jan 27 2016 01:23:54 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Aug 23 2019 11:32:48 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -87,7 +87,9 @@
 
     
 
-     
+    
+
+    
 
     
 
@@ -101,7 +103,9 @@
 
     
 
+    
     <h4 class="name" id="digest"><span class="type-signature"></span>digest<span class="signature">(options)</span><span class="type-signature"> &rarr; {Buffer}</span></h4>
+    
 
     
 
@@ -293,7 +297,7 @@
             
 
             <td class="description last"><p>Key encoding (ascii, hex,
-  base32, base64).</p></td>
+base32, base64).</p></td>
         </tr>
 
     
@@ -333,7 +337,7 @@
             
 
             <td class="description last"><p>Hash algorithm (sha1, sha256,
-  sha512).</p></td>
+sha512).</p></td>
         </tr>
 
     
@@ -371,7 +375,7 @@
             
 
             <td class="description last"><p>(DEPRECATED. Use <code>secret</code> instead.)
-  Shared secret key</p></td>
+Shared secret key</p></td>
         </tr>
 
     
@@ -442,6 +446,8 @@
 
 
 
+
+
 <h5>Returns:</h5>
 
         
@@ -467,12 +473,16 @@
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="generateSecret"><span class="type-signature"></span>generateSecret<span class="signature">(options)</span><span class="type-signature"> &rarr; {Object|<a href="global.html#GeneratedSecret">GeneratedSecret</a>}</span></h4>
+    
 
     
 
@@ -604,6 +614,45 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
 
         <tr>
             
+                <td class="name"><code>secret</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#SecretOptions">SecretOptions</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>symbols</code></td>
             
 
@@ -650,6 +699,9 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
             
                 
 <span class="param-type">Boolean</span>
+|
+
+<span class="param-type">String</span>
 
 
             
@@ -670,14 +722,14 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
             
                 <td class="default">
                 
-                    true
+                    'ascii'
                 
                 </td>
             
 
             <td class="description last"><p>Whether to output a Google
-  Authenticator-compatible otpauth:// URL (only returns otpauth:// URL, no
-  QR code)</p></td>
+Authenticator-compatible otpauth:// URL (only returns otpauth:// URL, no
+QR code)</p></td>
         </tr>
 
     
@@ -754,8 +806,8 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
             
 
             <td class="description last"><p>(DEPRECATED. Do not use to prevent
-  leaking of secret to a third party. Use your own QR code implementation.)
-  Output QR code URLs for the token.</p></td>
+leaking of secret to a third party. Use your own QR code implementation.)
+Output QR code URLs for the token.</p></td>
         </tr>
 
     
@@ -795,8 +847,48 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
             
 
             <td class="description last"><p>(DEPRECATED. Do not use to
-  prevent leaking of secret to a third party. Use your own QR code
-  implementation.) Output a Google Authenticator otpauth:// QR code URL.</p></td>
+prevent leaking of secret to a third party. Use your own QR code
+implementation.) Output a Google Authenticator otpauth:// QR code URL.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>issuer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ''
+                
+                </td>
+            
+
+            <td class="description last"><p>The provider or service with which the
+secret key is associated.</p></td>
         </tr>
 
     
@@ -844,7 +936,7 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line442">line 442</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line508">line 508</a>
     </li></ul></dd>
     
 
@@ -854,6 +946,8 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
 
     
 </dl>
+
+
 
 
 
@@ -908,12 +1002,16 @@ Authenticator URL to obtain a QR code you can scan into the app.</p>
 
 
 
+
+
         
             
 
     
 
-    <h4 class="name" id="generateSecretASCII"><span class="type-signature"></span>generateSecretASCII<span class="signature">(length<span class="signature-attributes">opt</span>, symbols<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {String}</span></h4>
+    
+    <h4 class="name" id="generateSecretASCII"><span class="type-signature"></span>generateSecretASCII<span class="signature">(length<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -1000,13 +1098,13 @@ symbols (if requested).</p>
 
         <tr>
             
-                <td class="name"><code>symbols</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type"><a href="global.html#SecretOptions">SecretOptions</a></span>
 
 
             
@@ -1027,12 +1125,12 @@ symbols (if requested).</p>
             
                 <td class="default">
                 
-                    false
+                    {}
                 
                 </td>
             
 
-            <td class="description last"><p>Whether to include symbols in the key.</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -1073,7 +1171,7 @@ symbols (if requested).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line504">line 504</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line571">line 571</a>
     </li></ul></dd>
     
 
@@ -1096,28 +1194,10 @@ symbols (if requested).</p>
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>The generated key.</p>
-</div>
 
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">String</span>
 
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -1126,7 +1206,9 @@ symbols (if requested).</p>
 
     
 
+    
     <h4 class="name" id="hotp"><span class="type-signature"></span>hotp<span class="signature">(options)</span><span class="type-signature"> &rarr; {String}</span></h4>
+    
 
     
 
@@ -1358,7 +1440,7 @@ base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
             
 
             <td class="description last"><p>The number of digits for the one-time
-  passcode.</p></td>
+passcode.</p></td>
         </tr>
 
     
@@ -1398,7 +1480,7 @@ base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
             
 
             <td class="description last"><p>Key encoding (ascii, hex,
-  base32, base64).</p></td>
+base32, base64).</p></td>
         </tr>
 
     
@@ -1438,7 +1520,7 @@ base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
             
 
             <td class="description last"><p>Hash algorithm (sha1, sha256,
-  sha512).</p></td>
+sha512).</p></td>
         </tr>
 
     
@@ -1476,7 +1558,7 @@ base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
             
 
             <td class="description last"><p>(DEPRECATED. Use <code>secret</code> instead.)
-  Shared secret key</p></td>
+Shared secret key</p></td>
         </tr>
 
     
@@ -1516,7 +1598,7 @@ base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
             
 
             <td class="description last"><p>(DEPRECATED. Use <code>digits</code> instead.) The
-  number of digits for the one-time passcode.</p></td>
+number of digits for the one-time passcode.</p></td>
         </tr>
 
     
@@ -1564,7 +1646,7 @@ base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line88">line 88</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line105">line 105</a>
     </li></ul></dd>
     
 
@@ -1574,6 +1656,8 @@ base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
 
     
 </dl>
+
+
 
 
 
@@ -1612,12 +1696,16 @@ base32) and the hashing algorithm to use (SHA1, SHA256, SHA512).</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="hotp%E2%80%A4verify"><span class="type-signature"></span>hotp.verify<span class="signature">(options)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    
 
     
 
@@ -1808,7 +1896,7 @@ hotp.verifyDelta.</p>
             
 
             <td class="description last"><p>Counter value. This should be stored by
-  the application and must be incremented for each request.</p></td>
+the application and must be incremented for each request.</p></td>
         </tr>
 
     
@@ -1848,7 +1936,7 @@ hotp.verifyDelta.</p>
             
 
             <td class="description last"><p>The number of digits for the one-time
-  passcode.</p></td>
+passcode.</p></td>
         </tr>
 
     
@@ -1888,9 +1976,9 @@ hotp.verifyDelta.</p>
             
 
             <td class="description last"><p>The allowable margin for the counter.
-  The function will check &quot;W&quot; codes in the future against the provided
-  passcode, e.g. if W = 10, and C = 5, this function will check the
-  passcode against all One Time Passcodes between 5 and 15, inclusive.</p></td>
+The function will check &quot;W&quot; codes in the future against the provided
+passcode, e.g. if W = 10, and C = 5, this function will check the
+passcode against all One Time Passcodes between 5 and 15, inclusive.</p></td>
         </tr>
 
     
@@ -1930,7 +2018,7 @@ hotp.verifyDelta.</p>
             
 
             <td class="description last"><p>Key encoding (ascii, hex,
-  base32, base64).</p></td>
+base32, base64).</p></td>
         </tr>
 
     
@@ -1970,7 +2058,7 @@ hotp.verifyDelta.</p>
             
 
             <td class="description last"><p>Hash algorithm (sha1, sha256,
-  sha512).</p></td>
+sha512).</p></td>
         </tr>
 
     
@@ -2018,7 +2106,7 @@ hotp.verifyDelta.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line191">line 191</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line229">line 229</a>
     </li></ul></dd>
     
 
@@ -2041,12 +2129,14 @@ hotp.verifyDelta.</p>
 
 
 
+
+
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
     <p>Returns true if the token matches within the given
-  window, false otherwise.</p>
+window, false otherwise.</p>
 </div>
 
 
@@ -2067,12 +2157,16 @@ hotp.verifyDelta.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="hotp%E2%80%A4verifyDelta"><span class="type-signature"></span>hotp.verifyDelta<span class="signature">(options)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
 
     
 
@@ -2270,7 +2364,7 @@ it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
             
 
             <td class="description last"><p>Counter value. This should be stored by
-  the application and must be incremented for each request.</p></td>
+the application and must be incremented for each request.</p></td>
         </tr>
 
     
@@ -2310,7 +2404,7 @@ it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
             
 
             <td class="description last"><p>The number of digits for the one-time
-  passcode.</p></td>
+passcode.</p></td>
         </tr>
 
     
@@ -2350,9 +2444,9 @@ it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
             
 
             <td class="description last"><p>The allowable margin for the counter.
-  The function will check &quot;W&quot; codes in the future against the provided
-  passcode, e.g. if W = 10, and C = 5, this function will check the
-  passcode against all One Time Passcodes between 5 and 15, inclusive.</p></td>
+The function will check &quot;W&quot; codes in the future against the provided
+passcode, e.g. if W = 10, and C = 5, this function will check the
+passcode against all One Time Passcodes between 5 and 15, inclusive.</p></td>
         </tr>
 
     
@@ -2392,7 +2486,7 @@ it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
             
 
             <td class="description last"><p>Key encoding (ascii, hex,
-  base32, base64).</p></td>
+base32, base64).</p></td>
         </tr>
 
     
@@ -2432,7 +2526,7 @@ it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
             
 
             <td class="description last"><p>Hash algorithm (sha1, sha256,
-  sha512).</p></td>
+sha512).</p></td>
         </tr>
 
     
@@ -2480,7 +2574,7 @@ it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line116">line 116</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line148">line 148</a>
     </li></ul></dd>
     
 
@@ -2503,13 +2597,15 @@ it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
 
 
 
+
+
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
     <p>On success, returns an object with the counter
-  difference between the client and the server as the <code>delta</code> property (i.e.
-  <code>{ delta: 0 }</code>).</p>
+difference between the client and the server as the <code>delta</code> property (i.e.
+<code>{ delta: 0 }</code>).</p>
 </div>
 
 
@@ -2530,12 +2626,16 @@ it at counter position 7, it will return <code>{ delta: 2 }</code>.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="otpauthURL"><span class="type-signature"></span>otpauthURL<span class="signature">(options)</span><span class="type-signature"> &rarr; {String}</span></h4>
+    
 
     
 
@@ -2695,7 +2795,7 @@ generator, such as the <code>qr-image</code> module.</p>
             
 
             <td class="description last"><p>Used to identify the account with which
-  the secret key is associated, e.g. the user's email address.</p></td>
+the secret key is associated, e.g. the user's email address.</p></td>
         </tr>
 
     
@@ -2772,7 +2872,7 @@ generator, such as the <code>qr-image</code> module.</p>
             
 
             <td class="description last"><p>The initial counter value, required
-  for HOTP.</p></td>
+for HOTP.</p></td>
         </tr>
 
     
@@ -2810,7 +2910,7 @@ generator, such as the <code>qr-image</code> module.</p>
             
 
             <td class="description last"><p>The provider or service with which the
-  secret key is associated.</p></td>
+secret key is associated.</p></td>
         </tr>
 
     
@@ -2850,7 +2950,7 @@ generator, such as the <code>qr-image</code> module.</p>
             
 
             <td class="description last"><p>Hash algorithm (sha1, sha256,
-  sha512).</p></td>
+sha512).</p></td>
         </tr>
 
     
@@ -2890,7 +2990,7 @@ generator, such as the <code>qr-image</code> module.</p>
             
 
             <td class="description last"><p>The number of digits for the one-time
-  passcode. Currently ignored by Google Authenticator.</p></td>
+passcode. Currently ignored by Google Authenticator.</p></td>
         </tr>
 
     
@@ -2930,8 +3030,8 @@ generator, such as the <code>qr-image</code> module.</p>
             
 
             <td class="description last"><p>The length of time for which a TOTP
-  code will be valid, in seconds. Currently ignored by Google
-  Authenticator.</p></td>
+code will be valid, in seconds. Currently ignored by Google
+Authenticator.</p></td>
         </tr>
 
     
@@ -2969,7 +3069,7 @@ generator, such as the <code>qr-image</code> module.</p>
             
 
             <td class="description last"><p>Key encoding (ascii, hex, base32,
-  base64). If the key is not encoded in Base-32, it will be reencoded.</p></td>
+base64). If the key is not encoded in Base-32, it will be reencoded.</p></td>
         </tr>
 
     
@@ -3017,7 +3117,7 @@ generator, such as the <code>qr-image</code> module.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line563">line 563</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line643">line 643</a>
     </li></ul></dd>
     
 
@@ -3045,6 +3145,8 @@ generator, such as the <code>qr-image</code> module.</p>
 
 
 
+
+
 <h5>Throws:</h5>
 
         
@@ -3052,11 +3154,11 @@ generator, such as the <code>qr-image</code> module.</p>
     <div class="param-desc">
     
         <p>Error if secret or label is missing, or if hotp is used and a
-    counter is missing, if the type is not one of <code>hotp</code> or <code>totp</code>, if the
-    number of digits is non-numeric, or an invalid period is used. Warns if
-    the number of digits is not either 6 or 8 (though 6 is the only one
-    supported by Google Authenticator), and if the hashihng algorithm is
-    not one of the supported SHA1, SHA256, or SHA512.</p>
+counter is missing, if the type is not one of <code>hotp</code> or <code>totp</code>, if the
+number of digits is non-numeric, or an invalid period is used. Warns if
+the number of digits is not either 6 or 8 (though 6 is the only one
+supported by Google Authenticator), and if the hashihng algorithm is
+not one of the supported SHA1, SHA256, or SHA512.</p>
     
     </div>
 
@@ -3089,12 +3191,16 @@ generator, such as the <code>qr-image</code> module.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="totp"><span class="type-signature"></span>totp<span class="signature">(options)</span><span class="type-signature"> &rarr; {String}</span></h4>
+    
 
     
 
@@ -3256,7 +3362,7 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
             
 
             <td class="description last"><p>Time in seconds with which to calculate
-  counter value. Defaults to <code>Date.now()</code>.</p></td>
+counter value. Defaults to <code>Date.now()</code>.</p></td>
         </tr>
 
     
@@ -3335,7 +3441,7 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
             
 
             <td class="description last"><p>Initial time in seconds since the UNIX
-  epoch from which to calculate the counter value. Defaults to 0 (no offset).</p></td>
+epoch from which to calculate the counter value. Defaults to 0 (no offset).</p></td>
         </tr>
 
     
@@ -3412,7 +3518,7 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
             
 
             <td class="description last"><p>The number of digits for the one-time
-  passcode.</p></td>
+passcode.</p></td>
         </tr>
 
     
@@ -3452,7 +3558,7 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
             
 
             <td class="description last"><p>Key encoding (ascii, hex,
-  base32, base64).</p></td>
+base32, base64).</p></td>
         </tr>
 
     
@@ -3492,7 +3598,7 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
             
 
             <td class="description last"><p>Hash algorithm (sha1, sha256,
-  sha512).</p></td>
+sha512).</p></td>
         </tr>
 
     
@@ -3530,7 +3636,7 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
             
 
             <td class="description last"><p>(DEPRECATED. Use <code>secret</code> instead.)
-  Shared secret key</p></td>
+Shared secret key</p></td>
         </tr>
 
     
@@ -3570,8 +3676,8 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
             
 
             <td class="description last"><p>(DEPRECATED. Use <code>epoch</code> instead.)
-  Initial time in seconds since the UNIX epoch from which to calculate the
-  counter value. Defaults to 0 (no offset).</p></td>
+Initial time in seconds since the UNIX epoch from which to calculate the
+counter value. Defaults to 0 (no offset).</p></td>
         </tr>
 
     
@@ -3611,7 +3717,7 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
             
 
             <td class="description last"><p>(DEPRECATED. Use <code>digits</code> instead.) The
-  number of digits for the one-time passcode.</p></td>
+number of digits for the one-time passcode.</p></td>
         </tr>
 
     
@@ -3659,7 +3765,7 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line285">line 285</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line323">line 323</a>
     </li></ul></dd>
     
 
@@ -3669,6 +3775,8 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
 
     
 </dl>
+
+
 
 
 
@@ -3707,12 +3815,16 @@ steps have passed since the epoch, and calls HOTP with that counter value.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="totp%E2%80%A4verify"><span class="type-signature"></span>totp.verify<span class="signature">(options)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    
 
     
 
@@ -3905,7 +4017,7 @@ totp.verifyDelta.</p>
             
 
             <td class="description last"><p>Time in seconds with which to calculate
-  counter value. Defaults to <code>Date.now()</code>.</p></td>
+counter value. Defaults to <code>Date.now()</code>.</p></td>
         </tr>
 
     
@@ -3984,7 +4096,7 @@ totp.verifyDelta.</p>
             
 
             <td class="description last"><p>Initial time in seconds  since the UNIX
-  epoch from which to calculate the counter value. Defaults to 0 (no offset).</p></td>
+epoch from which to calculate the counter value. Defaults to 0 (no offset).</p></td>
         </tr>
 
     
@@ -4061,7 +4173,7 @@ totp.verifyDelta.</p>
             
 
             <td class="description last"><p>The number of digits for the one-time
-  passcode.</p></td>
+passcode.</p></td>
         </tr>
 
     
@@ -4101,10 +4213,10 @@ totp.verifyDelta.</p>
             
 
             <td class="description last"><p>The allowable margin for the counter.
-  The function will check &quot;W&quot; codes in the future and the past against the
-  provided passcode, e.g. if W = 5, and C = 1000, this function will check
-  the passcode against all One Time Passcodes between 995 and 1005,
-  inclusive.</p></td>
+The function will check &quot;W&quot; codes in the future and the past against the
+provided passcode, e.g. if W = 5, and C = 1000, this function will check
+the passcode against all One Time Passcodes between 995 and 1005,
+inclusive.</p></td>
         </tr>
 
     
@@ -4144,7 +4256,7 @@ totp.verifyDelta.</p>
             
 
             <td class="description last"><p>Key encoding (ascii, hex,
-  base32, base64).</p></td>
+base32, base64).</p></td>
         </tr>
 
     
@@ -4184,7 +4296,7 @@ totp.verifyDelta.</p>
             
 
             <td class="description last"><p>Hash algorithm (sha1, sha256,
-  sha512).</p></td>
+sha512).</p></td>
         </tr>
 
     
@@ -4232,7 +4344,7 @@ totp.verifyDelta.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line370">line 370</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line422">line 422</a>
     </li></ul></dd>
     
 
@@ -4255,12 +4367,14 @@ totp.verifyDelta.</p>
 
 
 
+
+
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
     <p>Returns true if the token matches within the given
-  window, false otherwise.</p>
+window, false otherwise.</p>
 </div>
 
 
@@ -4281,12 +4395,16 @@ totp.verifyDelta.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="totp%E2%80%A4verifyDelta"><span class="type-signature"></span>totp.verifyDelta<span class="signature">(options)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
 
     
 
@@ -4490,7 +4608,7 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
             
 
             <td class="description last"><p>Time in seconds with which to calculate
-  counter value. Defaults to <code>Date.now()</code>.</p></td>
+counter value. Defaults to <code>Date.now()</code>.</p></td>
         </tr>
 
     
@@ -4569,7 +4687,7 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
             
 
             <td class="description last"><p>Initial time in seconds since the UNIX
-  epoch from which to calculate the counter value. Defaults to 0 (no offset).</p></td>
+epoch from which to calculate the counter value. Defaults to 0 (no offset).</p></td>
         </tr>
 
     
@@ -4646,7 +4764,7 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
             
 
             <td class="description last"><p>The number of digits for the one-time
-  passcode.</p></td>
+passcode.</p></td>
         </tr>
 
     
@@ -4686,10 +4804,10 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
             
 
             <td class="description last"><p>The allowable margin for the counter.
-  The function will check &quot;W&quot; codes in the future and the past against the
-  provided passcode, e.g. if W = 5, and C = 1000, this function will check
-  the passcode against all One Time Passcodes between 995 and 1005,
-  inclusive.</p></td>
+The function will check &quot;W&quot; codes in the future and the past against the
+provided passcode, e.g. if W = 5, and C = 1000, this function will check
+the passcode against all One Time Passcodes between 995 and 1005,
+inclusive.</p></td>
         </tr>
 
     
@@ -4729,7 +4847,7 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
             
 
             <td class="description last"><p>Key encoding (ascii, hex,
-  base32, base64).</p></td>
+base32, base64).</p></td>
         </tr>
 
     
@@ -4769,7 +4887,7 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
             
 
             <td class="description last"><p>Hash algorithm (sha1, sha256,
-  sha512).</p></td>
+sha512).</p></td>
         </tr>
 
     
@@ -4817,7 +4935,7 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line299">line 299</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line346">line 346</a>
     </li></ul></dd>
     
 
@@ -4840,13 +4958,15 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
 
 
 
+
+
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
     <p>On success, returns an object with the time step
-  difference between the client and the server as the <code>delta</code> property (e.g.
-  <code>{ delta: 0 }</code>).</p>
+difference between the client and the server as the <code>delta</code> property (e.g.
+<code>{ delta: 0 }</code>).</p>
 </div>
 
 
@@ -4864,6 +4984,8 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
 </dl>
 
     
+
+
 
 
 
@@ -5077,7 +5199,7 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
             
 
             <td class="description last"><p>URL for the Google Authenticator otpauth
-  URL's QR code.</p></td>
+URL's QR code.</p></td>
         </tr>
 
     
@@ -5139,7 +5261,330 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line405">line 405</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line468">line 468</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="SecretOptions">SecretOptions</h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>symbols</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Include symbols ( e.g. @#$% ).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>numbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Include numbers ( e.g. 123456 ).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lowercase</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Include lowercase characters ( e.g. abcdefgh ).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>uppercase</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Include uppercase characters ( e.g. ABCDEFGH ).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>similar</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Include similar characters ( e.g. i, l, 1, L, o, 0, O ).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ambiguous</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Include ambiguous characters ( ( ) &lt; &gt; / [ ] { } , . : ; ).</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line457">line 457</a>
     </li></ul></dd>
     
 
@@ -5175,7 +5620,7 @@ If it finds it at counter position 997, it will return <code>{ delta: -3 }</code
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jan 27 2016 01:23:54 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Aug 23 2019 11:32:48 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
