@@ -41,21 +41,21 @@ exports.digest = function digest (options) {
     secret = Buffer.from(secret, encoding);
   }
 
-  var secret_buffer_size;
+  var secretBufferSize;
   if (algorithm === 'sha1') {
-    secret_buffer_size = 20; // 20 bytes
+    secretBufferSize = 20; // 20 bytes
   } else if (algorithm === 'sha256') {
-    secret_buffer_size = 32; // 32 bytes
+    secretBufferSize = 32; // 32 bytes
   } else if (algorithm === 'sha512') {
-    secret_buffer_size = 64; // 64 bytes
+    secretBufferSize = 64; // 64 bytes
   } else {
     console.warn('Speakeasy - The algorithm provided (`' + algorithm + '`) is not officially supported, results may be different than expected.');
   }
 
   // The secret for sha1, sha256 and sha512 needs to be a fixed number of bytes for the one-time-password to be calculated correctly
   // Pad the buffer to the correct size be repeating the secret to the desired length
-  if (secret_buffer_size && secret.length !== secret_buffer_size) {
-    secret = Buffer.from(Array(Math.ceil(secret_buffer_size / secret.length) + 1).join(secret.toString('hex')), 'hex').slice(0, secret_buffer_size);
+  if (secretBufferSize && secret.length !== secretBufferSize) {
+    secret = Buffer.from(Array(Math.ceil(secretBufferSize / secret.length) + 1).join(secret.toString('hex')), 'hex').slice(0, secretBufferSize);
   }
 
   // create an buffer from the counter
@@ -103,7 +103,6 @@ exports.digest = function digest (options) {
  */
 
 exports.hotp = function hotpGenerate (options) {
-
   // verify secret and counter exists
   var secret = options.secret;
   var key = options.key;
@@ -196,7 +195,7 @@ exports.hotp.verifyDelta = function hotpVerifyDelta (options) {
   if (token === null || typeof token === 'undefined') throw new Error('Speakeasy - hotp.verifyDelta - Missing token');
 
   // unpack options
-  var token = String(options.token);
+  token = String(options.token);
   var digits = parseInt(options.digits, 10) || 6;
   var window = parseInt(options.window, 10) || 0;
   var counter = parseInt(options.counter, 10) || 0;
@@ -220,7 +219,7 @@ exports.hotp.verifyDelta = function hotpVerifyDelta (options) {
     // domain-specific constant-time comparison for integer codes
     if (parseInt(exports.hotp(options), 10) === token) {
       // found a matching code, return delta
-      return {delta: i - counter};
+      return { delta: i - counter };
     }
   }
 
@@ -511,9 +510,9 @@ exports.generateSecret = function generateSecret (options) {
   if (!options) options = {};
   var length = options.length || 32;
   var name = options.name || 'SecretKey';
-  var qr_codes = options.qr_codes || false;
-  var google_auth_qr = options.google_auth_qr || false;
-  var otpauth_url = options.otpauth_url != null ? options.otpauth_url : true;
+  var qrCodes = options.qr_codes || false;
+  var googleAuthQr = options.google_auth_qr || false;
+  var otpauthUrl = options.otpauth_url != null ? options.otpauth_url : true;
   var secret = options.secret || {};
   var issuer = options.issuer;
 
@@ -532,7 +531,7 @@ exports.generateSecret = function generateSecret (options) {
   SecretKey.base32 = base32.encode(Buffer.from(key)).toString().replace(/=/g, '');
 
   // generate some qr codes if requested
-  if (qr_codes) {
+  if (qrCodes) {
     console.warn('Speakeasy - Deprecation Notice - generateSecret() QR codes are deprecated and no longer supported. Please use your own QR code implementation.');
     SecretKey.qr_code_ascii = 'https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=' + encodeURIComponent(SecretKey.ascii);
     SecretKey.qr_code_hex = 'https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=' + encodeURIComponent(SecretKey.hex);
@@ -540,7 +539,7 @@ exports.generateSecret = function generateSecret (options) {
   }
 
   // add in the Google Authenticator-compatible otpauth URL
-  if (otpauth_url) {
+  if (otpauthUrl) {
     SecretKey.otpauth_url = exports.otpauthURL({
       secret: SecretKey.ascii,
       label: name,
@@ -549,7 +548,7 @@ exports.generateSecret = function generateSecret (options) {
   }
 
   // generate a QR code for use in Google Authenticator if requested
-  if (google_auth_qr) {
+  if (googleAuthQr) {
     console.warn('Speakeasy - Deprecation Notice - generateSecret() Google Auth QR code is deprecated and no longer supported. Please use your own QR code implementation.');
     SecretKey.google_auth_qr = 'https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=' + encodeURIComponent(exports.otpauthURL({ secret: SecretKey.base32, label: name }));
   }
@@ -570,7 +569,7 @@ exports.generate_key = util.deprecate(function (options) {
  * @param {SecretOptions} [options={}]
  */
 exports.generateSecretASCII = function generateSecretASCII (length, options) {
-  var defaults = {symbols: true, numbers: true, lowercase: true, uppercase: true, similar: true, ambiguous: true};
+  var defaults = { symbols: true, numbers: true, lowercase: true, uppercase: true, similar: true, ambiguous: true };
   options = Object.assign({}, defaults, options || {});
 
   var bytes = crypto.randomBytes(length || 32);
@@ -583,8 +582,8 @@ exports.generateSecretASCII = function generateSecretASCII (length, options) {
   if (options.ambiguous) symbols += '()<>/[]{},.:;';
   if (options.lowercase) set += letters;
   if (options.uppercase) set += letters.toUpperCase();
-  if (options.numbers)   set += numbers;
-  if (options.symbols)   set += symbols;
+  if (options.numbers) set += numbers;
+  if (options.symbols) set += symbols;
   if (set === '') {
     throw new Error('Speakeasy - generateSecretASCII - Invalid options `' + options + '`; must have at least one of these propertiest enabled: lowercase, uppercase, numbers, symbols');
   }
@@ -676,7 +675,7 @@ exports.otpauthURL = function otpauthURL (options) {
   if (Buffer.isBuffer(secret)) secret = base32.encode(secret);
 
   // build query while validating
-  var query = {secret: secret};
+  var query = { secret: secret };
   if (issuer) query.issuer = issuer;
   if (type === 'hotp') {
     query.counter = counter;
